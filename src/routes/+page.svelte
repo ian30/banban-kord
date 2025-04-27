@@ -62,16 +62,7 @@
   // Add a new state variable for card icon
   let newCardIcon = '';
   
-  // Remove this duplicate declaration
-  // const iconOptions = [
-  //   { value: '', label: 'None' },
-  //   { value: 'exclamation-triangle-fill', label: 'Warning' },
-  //   { value: 'exclamation-circle-fill', label: 'Danger' },
-  //   { value: 'info-circle-fill', label: 'Info' },
-  //   { value: 'star-fill', label: 'Star' },
-  //   { value: 'flag-fill', label: 'Flag' }
-  // ];
-  
+ 
   // Add a flag to identify the Done column
   let doneColumnId = null;
   
@@ -147,7 +138,7 @@
         newCardDescription.trim(), 
         targetColumnId, 
         newCardColor,
-        newCardIcon // Add the icon
+        newCardIcon // This parameter is being passed correctly
       );
       newCardTitle = '';
       newCardDescription = '';
@@ -357,23 +348,7 @@
     }
   }
   
-  // Remove this duplicate onMount function
-  // onMount(async () => {
-  //   await loadData();
-  //   await loadTheme();
-  //   
-  //   // Check if a Done column already exists, otherwise create one
-  //   ensureDoneColumn();
-  //   
-  //   // Add event listener for clicks outside dropdown
-  //   document.addEventListener('click', handleClickOutside);
-  //   
-  //   return () => {
-  //     document.removeEventListener('click', handleClickOutside);
-  //   };
-  // });
-
-  // Update the original onMount function to include the click handler
+  // This is the only onMount function we need
   onMount(async () => {
     await loadData();
     await loadTheme();
@@ -812,7 +787,7 @@
   
   .regular-columns {
     display: flex; /* Use flex for horizontal layout */
-    gap: 1rem;
+    gap: .1rem;
     overflow-x: auto;
     flex-grow: 1;
     padding-right: 1rem;
@@ -820,23 +795,26 @@
   }
   
   .fixed-columns {
-    width: 280px;
+    width: 301px;
     margin-left: 1rem;
-    border-left: 2px solid #ddd;
+    /* border-left: 2px solid #ddd; */
     flex-shrink: 0;
     height: 100%;
     overflow-y: auto;
+    overflow-x: hidden; /* Add this to prevent horizontal scroll */
   }
   
   .fixed-column {
     background-color: rgba(0, 128, 0, 0.05);
     height: 100%;
+    width: 100%; /* Ensure the column takes full width of its container */
+    max-width: 280px; /* Match the container width */
   }
   
   /* Ensure columns have proper sizing */
   .kanban-column {
-    min-width: 280px;
-    width: 280px;
+    min-width: 300px;
+    width: 300px;
     display: flex;
     flex-direction: column;
     background-color: #f8f9fa;
@@ -890,7 +868,7 @@
     .regular-columns {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      gap: .1rem;
       padding-right: 0;
       padding-bottom: 1rem;
       overflow-y: auto;

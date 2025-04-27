@@ -122,7 +122,7 @@ export async function createColumn(name, boardId, color = 'blue', isFixed = fals
 }
 
 // Card operations
-export async function createCard(title, description, columnId, color = 'blue') {
+export async function createCard(title, description, columnId, color = 'blue', icon = '') {
   try {
     // Get the highest order value
     let maxOrder = 0;
@@ -134,7 +134,7 @@ export async function createCard(title, description, columnId, color = 'blue') {
       return cards;
     });
     
-    const card = { title, description, columnId, order: maxOrder, color };
+    const card = { title, description, columnId, order: maxOrder, color, icon };
     const id = await db.addCard(card);
     
     cards.update(cards => [...cards, { ...card, id }]);
