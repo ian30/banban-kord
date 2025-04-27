@@ -1,0 +1,52 @@
+/* Dark Theme */
+:root {
+  --bg-color: #212529;
+  --text-color: #f8f9fa;
+  --card-bg: #343a40;
+  --column-bg: #2c3034;
+  --column-header-bg: #212529;
+  --border-color: #495057;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --primary-color: #0d6efd;
+  --success-color: #198754;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #0dcaf0;
+}
+
+body.theme-dark {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.theme-dark .kanban-column {
+  background-color: var(--column-bg);
+  box-shadow: 0 0.125rem 0.25rem var(--shadow-color);
+}
+
+.theme-dark .kanban-column-header {
+  background-color: var(--column-header-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.theme-dark .kanban-card {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  box-shadow: 0 1px 3px var(--shadow-color);
+}
+
+.theme-dark .modal-content {
+  background-color: var(--column-bg);
+  color: var(--text-color);
+}
+
+.theme-dark .form-control,
+.theme-dark .form-select {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+.theme-dark .btn-close {
+  filter: invert(1);
+}

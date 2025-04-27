@@ -1,0 +1,77 @@
+/* Windows 95 Theme */
+:root {
+  --bg-color: #c0c0c0;
+  --text-color: #000000;
+  --card-bg: #ffffff;
+  --column-bg: #c0c0c0;
+  --column-header-bg: #0000aa;
+  --column-header-text: #ffffff;
+  --border-color: #808080;
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --button-highlight: #ffffff;
+  --button-face: #c0c0c0;
+  --button-shadow: #808080;
+  --primary-color: #0000aa;
+}
+
+body.theme-win95 {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'MS Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+}
+
+.theme-win95 .kanban-container {
+  border: 2px solid;
+  border-color: var(--button-highlight) var(--button-shadow) var(--button-shadow) var(--button-highlight);
+  padding: 2px;
+}
+
+.theme-win95 .kanban-column {
+  background-color: var(--column-bg);
+  border: 2px solid;
+  border-color: var(--button-highlight) var(--button-shadow) var(--button-shadow) var(--button-highlight);
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.theme-win95 .kanban-column-header {
+  background-color: var(--column-header-bg);
+  color: var(--column-header-text);
+  border-bottom: 2px solid var(--button-shadow);
+  font-weight: bold;
+  border-radius: 0;
+}
+
+.theme-win95 .kanban-card {
+  background-color: var(--card-bg);
+  border: 2px solid;
+  border-color: var(--button-highlight) var(--button-shadow) var(--button-shadow) var(--button-highlight);
+  box-shadow: none;
+  border-radius: 0;
+  margin-bottom: 8px;
+}
+
+.theme-win95 .btn {
+  border: 2px solid;
+  border-color: var(--button-highlight) var(--button-shadow) var(--button-shadow) var(--button-highlight);
+  background-color: var(--button-face);
+  border-radius: 0;
+  color: var(--text-color);
+}
+
+.theme-win95 .btn:active {
+  border-color: var(--button-shadow) var(--button-highlight) var(--button-highlight) var(--button-shadow);
+}
+
+.theme-win95 .modal-content {
+  background-color: var(--column-bg);
+  border: 2px solid;
+  border-color: var(--button-highlight) var(--button-shadow) var(--button-shadow) var(--button-highlight);
+  border-radius: 0;
+}
+
+.theme-win95 .modal-header {
+  background-color: var(--column-header-bg);
+  color: var(--column-header-text);
+  border-radius: 0;
+}

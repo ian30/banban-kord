@@ -1,0 +1,30 @@
+/* Light Theme */
+:root {
+  --bg-color: #f8f9fa;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+  --column-bg: #f0f0f0;
+  --column-header-bg: #e9ecef;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --primary-color: #007bff;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --info-color: #17a2b8;
+}
+
+.theme-light .kanban-column {
+  background-color: var(--column-bg);
+  box-shadow: 0 0.125rem 0.25rem var(--shadow-color);
+}
+
+.theme-light .kanban-column-header {
+  background-color: var(--column-header-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.theme-light .kanban-card {
+  background-color: var(--card-bg);
+  box-shadow: 0 1px 3px var(--shadow-color);
+}
