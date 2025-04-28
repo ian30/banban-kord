@@ -75,19 +75,6 @@
     ensureDoneColumn();
   });
   
-  // Function to ensure a Done column exists
-  async function ensureDoneColumn() {
-    const doneColumn = $currentColumns.find(col => col.name === 'Done' && col.isFixed);
-    
-    if (!doneColumn) {
-      // Create a fixed Done column
-      const id = await createColumn('Done', $currentBoard.id, 'green', true);
-      doneColumnId = id;
-    } else {
-      doneColumnId = doneColumn.id;
-    }
-  }
-  
   // Get cards for a specific column
   function getColumnCards(columnId) {
     return $cards
@@ -377,6 +364,36 @@ function exportBoardData() {
     URL.revokeObjectURL(url);
   }, 100);
 }
+
+// Function to ensure a Done column exists
+async function ensureDoneColumn() {
+    // First check if we already have a Done column
+    const doneColumns = $currentColumns.filter(col => col.name === 'Done' && col.isFixed);
+    
+    if (doneColumns.length === 0) {
+      // Create a fixed Done column if none exists
+      const id = await createColumn('Done', $currentBoard.id, 'green', true);
+      doneColumnId = id;
+    } else if (doneColumns.length > 1) {
+      // If we have multiple Done columns, keep only the first one
+      doneColumnId = doneColumns[0].id;
+      
+      // Delete the duplicate Done columns
+      for (let i = 1; i < doneColumns.length; i++) {
+        // Move any cards from duplicate columns to the main Done column
+        const duplicateCards = getColumnCards(doneColumns[i].id);
+        for (const card of duplicateCards) {
+          await moveCard(card.id, doneColumnId, 999); // High order to append at the end
+        }
+        
+        // Now delete the empty duplicate column
+        await deleteColumn(doneColumns[i].id);
+      }
+    } else {
+      // Just one Done column exists, use it
+      doneColumnId = doneColumns[0].id;
+    }
+  }
 
 // Add this function to handle importing data
 function handleImportData(event) {
