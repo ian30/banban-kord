@@ -256,3 +256,67 @@ export async function moveCard(cardId, targetColumnId, newOrder) {
     throw error;
   }
 }
+
+export async function importBoardData(data) {
+  try {
+    // Validate the imported data structure
+    if (!data.board || !data.columns || !data.cards) {
+      throw new Error('Invalid data format');
+    }
+    
+    // First, clear existing data for the current board
+    const boardId = data.board.id;
+    
+    // Get all columns for this board
+    const existingColumns = await db.getColumns(boardId);
+    
+    // Delete all cards in these columns
+    for (const column of existingColumns) {
+      const columnCards = await db.getCards(column.id);
+      for (const card of columnCards) {
+        await db.deleteCard(card.id);
+      }
+      // Delete the column
+      await db.deleteColumn(column.id);
+    }
+    
+    // Update the board name
+    await db.updateBoard(data.board);
+    currentBoardId.set(boardId);
+    
+    // Import columns with new IDs
+    const columnIdMap = {}; // Map old IDs to new IDs
+    for (const column of data.columns) {
+      const newColumn = { 
+        name: column.name,
+        boardId: boardId,
+        order: column.order,
+        color: column.color,
+        isFixed: column.isFixed
+      };
+      const newId = await db.addColumn(newColumn);
+      columnIdMap[column.id] = newId;
+    }
+    
+    // Import cards with new IDs and updated column references
+    for (const card of data.cards) {
+      const newCard = {
+        title: card.title,
+        description: card.description,
+        columnId: columnIdMap[card.columnId], // Use the new column ID
+        order: card.order,
+        color: card.color,
+        icon: card.icon
+      };
+      await db.addCard(newCard);
+    }
+    
+    // Reload all data to refresh the stores
+    await loadData();
+    
+    return true;
+  } catch (error) {
+    console.error('Error importing data:', error);
+    throw error;
+  }
+}

@@ -13,7 +13,8 @@
     deleteCard, 
     moveCard,
     moveColumn,
-    deleteColumn  // Add this import
+    deleteColumn,
+    importBoardData
   } from '$lib/stores/kanbanStore.js';
   
   import { currentTheme, themes, loadTheme, saveTheme } from '$lib/stores/themeStore.js';
@@ -347,7 +348,63 @@
       themeDropdownOpen = false;
     }
   }
+  // Add this function to handle export and a button in the UI:
+function exportBoardData() {
+  // Get current board data
+  const boardData = {
+    board: $currentBoard,
+    columns: $currentColumns,
+    cards: $cards
+  };
   
+  // Convert to JSON string with pretty formatting
+  const jsonData = JSON.stringify(boardData, null, 2);
+  
+  // Create a blob and download link
+  const blob = new Blob([jsonData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  // Create a temporary link and trigger download
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${$currentBoard.name.replace(/\s+/g, '_')}_board_export.json`;
+  document.body.appendChild(a);
+  a.click();
+  
+  // Clean up
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 100);
+}
+
+// Add this function to handle importing data
+function handleImportData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const jsonData = JSON.parse(e.target.result);
+        
+        // Confirm before overwriting
+        if (confirm('This will overwrite your current board data. Continue?')) {
+          await importBoardData(jsonData);
+          alert('Board data imported successfully!');
+        }
+      } catch (error) {
+        console.error('Error importing data:', error);
+        alert('Failed to import data. Please check the file format.');
+      }
+      
+      // Reset the file input
+      event.target.value = '';
+    };
+    
+    reader.readAsText(file);
+  }
+
   // This is the only onMount function we need
   onMount(async () => {
     await loadData();
@@ -390,6 +447,16 @@
         </h1>
       {/if}
       <div class="d-flex gap-2 align-items-center">
+        <!-- Add Import Button -->
+        <label class="btn btn-outline-secondary mb-0" title="Import board data from JSON">
+            <i class="bi bi-upload"></i> Import
+            <input type="file" accept=".json" on:change={handleImportData} class="d-none">
+          </label>
+        <!-- Add Export Button -->
+        <button class="btn btn-outline-secondary" on:click={exportBoardData} title="Export board data as JSON">
+          <i class="bi bi-download"></i> Export
+        </button>
+        
         <!-- Theme Switcher (custom implementation) -->
         <div class="dropdown position-relative">
           <button 
@@ -972,3 +1039,4 @@
     transition: background-color 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
   }
 </style>
+
