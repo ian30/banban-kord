@@ -39,7 +39,19 @@
   let editingCard = null;
   let editingColumn = null;
   let targetColumnId = null;
+  let isDoneColumnExpanded = false;
+
+  // Toggle Done column expansion
+  function toggleDoneColumn() {
+    isDoneColumnExpanded = !isDoneColumnExpanded;
+  }
   
+  // Close Done column when clicking outside
+  function handleClickOutsideDoneColumn(event) {
+    if (isDoneColumnExpanded && !event.target.closest('.fixed-columns')) {
+      isDoneColumnExpanded = false;
+    }
+  }
   // Available colors
   const colorOptions = [
     { value: 'blue', label: 'Blue' },
@@ -73,6 +85,15 @@
     
     // Check if a Done column already exists, otherwise create one
     ensureDoneColumn();
+
+    // Add event listeners for clicks outside
+    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleClickOutsideDoneColumn);
+    
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('click', handleClickOutsideDoneColumn);
+    };
   });
   
   // Get cards for a specific column
@@ -511,7 +532,7 @@ function handleImportData(event) {
       </div>
     </div>
     
-    <div class="kanban-container">
+    <div class="kanban-container"  on:click|self={handleClickOutsideDoneColumn}>
       <!-- Regular columns (non-fixed) -->
       <div class="regular-columns">
         {#each $currentColumns.filter(col => !col.isFixed) as column, columnIndex (column.id)}
@@ -569,7 +590,12 @@ function handleImportData(event) {
       </div>
       
       <!-- Fixed columns -->
-      <div class="fixed-columns">
+      <div class="fixed-columns" class:expanded={isDoneColumnExpanded}>
+        <!-- Add a handle for mobile view -->
+        <div class="done-column-handle d-lg-none" on:click={toggleDoneColumn}>
+            <i class="bi bi-chevron-{isDoneColumnExpanded ? 'right' : 'left'}"></i>
+            <span>Done</span>
+        </div>
         {#each $currentColumns.filter(col => col.isFixed) as column (column.id)}
           <div class="kanban-column column-{column.color || 'green'} fixed-column">
             <div class="kanban-column-header d-flex justify-content-between align-items-center">
@@ -881,11 +907,11 @@ function handleImportData(event) {
   .fixed-columns {
     width: 301px;
     margin-left: 1rem;
-    /* border-left: 2px solid #ddd; */
     flex-shrink: 0;
     height: 100%;
     overflow-y: auto;
-    overflow-x: hidden; /* Add this to prevent horizontal scroll */
+    overflow-x: hidden;
+    transition: transform 0.3s ease;
   }
   
   .fixed-column {
@@ -894,7 +920,93 @@ function handleImportData(event) {
     width: 100%; /* Ensure the column takes full width of its container */
     max-width: 280px; /* Match the container width */
   }
+  /* Done column handle for mobile - update these styles */
+  .done-column-handle {
+    display: none;
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #28a745;
+    color: white;
+    padding: 15px 10px;
+    border-radius: 8px 0 0 8px;
+    cursor: pointer;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+    z-index: 1000; /* Increase z-index to ensure visibility */
+  }
   
+  .done-column-handle i {
+    margin-right: 5px;
+    font-size: 1.2rem; /* Make the icon larger */
+  }
+  
+  /* For smaller screens, implement the slide-in behavior */
+  @media (max-width: 1399px) {
+    .kanban-container {
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+    
+    .regular-columns {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .1rem;
+      padding-right: 0;
+      padding-bottom: 1rem;
+      overflow-y: auto;
+      width: 100%;
+    }
+    
+    .kanban-column {
+      min-width: 0;
+      width: auto;
+      height: 300px;
+    }
+    
+    .fixed-columns {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 85%;
+      max-width: 300px;
+      height: 100%;
+      margin-left: 0;
+      margin-top: 0;
+      border-left: 2px solid #ddd;
+      border-top: none;
+      transform: translateX(calc(100% - 40px));
+      z-index: 100;
+      background-color: var(--bs-body-bg, #fff);
+      box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    }
+    
+    .fixed-columns.expanded {
+      transform: translateX(0);
+    }
+    
+    .done-column-handle {
+      display: flex;
+      align-items: center;
+    }
+    
+    .fixed-column {
+      height: calc(100% - 50px);
+      margin-top: 50px;
+    }
+  }
+  
+  /* For mobile, stack columns */
+  @media (max-width: 767px) {
+    .regular-columns {
+      grid-template-columns: 1fr;
+    }
+    
+    .fixed-columns {
+      width: 90%;
+    }
+  }
   /* Ensure columns have proper sizing */
   .kanban-column {
     min-width: 300px;
@@ -970,6 +1082,12 @@ function handleImportData(event) {
       margin-left: 0;
       border-left: none;
       border-top: 2px solid #ddd;
+    }
+    .done-column-handle {
+      display: flex; /* Ensure it's displayed as flex */
+      align-items: center;
+      width: 40px; /* Set explicit width */
+      left: -40px; /* Position it correctly */
     }
   }
   
